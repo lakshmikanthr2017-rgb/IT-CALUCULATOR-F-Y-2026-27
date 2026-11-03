@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary & Income Tax Calculator FY 2026-27 (Form 16)</title>
+    <!-- Tailwind CSS for clean styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body { font-size: 11px; }
+            .no-print { display: none; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #cbd5e1; padding: 4px; text-align: center; }
+        }
+        table input {
+            width: 100%;
+            background: transparent;
+            text-align: center;
+            border: none;
+            outline: none;
+        }
+        table input:focus {
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4">
+
+    <div class="max-w-7xl mx-auto bg-white shadow-xl rounded-lg p-6 my-4">
+        <!-- Header -->
+        <div class="text-center border-b pb-4 mb-6">
+            <h1 class="text-2xl font-bold uppercase text-blue-900">Government Lower Primary School</h1>
+            <h2 class="text-lg font-semibold text-slate-600">Salary Statement & Income Tax Calculation Form 16 (FY 2026-27 / AY 2027-28)</h2>
+        </div>
+
+        <!-- Employee Metadata Form -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase">Employee Name</label>
+                <input type="text" id="empName" value="LAKSHMIKANTH R" class="w-full border rounded p-1.5 mt-1 bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase">School Name</label>
+                <input type="text" id="schoolName" value="GLPS Kamalapura Gollarahatti" class="w-full border rounded p-1.5 mt-1 bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase">Designation</label>
+                <input type="text" id="designation" value="Primary School Teacher" class="w-full border rounded p-1.5 mt-1 bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase">PAN Number</label>
+                <input type="text" id="panNo" value="ABCDE1234F" class="w-full border rounded p-1.5 mt-1 bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase">KGID Number</label>
+                <input type="text" id="kgidNo" value="123456" class="w-full border rounded p-1.5 mt-1 bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase">Other Income (FD/RD etc.)</label>
+                <input type="number" id="otherIncome" value="0" oninput="calculateAll()" class="w-full border rounded p-1.5 mt-1 bg-white">
+            </div>
+        </div>
+
+        <!-- Monthly Salary & Deductions Table -->
+        <h3 class="font-bold text-lg mb-2 text-blue-800">Monthly Salary & Deduction Statement</h3>
+        <div class="overflow-x-auto mb-8">
+            <table id="salaryTable" class="min-w-full border border-slate-300 text-xs">
+                <thead>
+                    <tr class="bg-blue-900 text-white">
+                        <th class="border p-2">Period</th>
+                        <th class="border p-2">Pay (Basic)</th>
+                        <th class="border p-2">DA (15.75%)</th>
+                        <th class="border p-2">HRA (7.5%)</th>
+                        <th class="border p-2">PPSFN</th>
+                        <th class="border p-2 bg-blue-800">Gross Total</th>
+                        <th class="border p-2">IT Tax</th>
+                        <th class="border p-2">GIS</th>
+                        <th class="border p-2">PT</th>
+                        <th class="border p-2">LIC</th>
+                        <th class="border p-2">KGID</th>
+                        <th class="border p-2">GPF</th>
+                        <th class="border p-2">KASS</th>
+                        <th class="border p-2">NPS</th>
+                        <th class="border p-2">GPF Loan</th>
+                        <th class="border p-2">KGID Loan</th>
+                        <th class="border p-2">FA</th>
+                        <th class="border p-2">Local Rec.</th>
+                        <th class="border p-2 bg-red-900">Total Ded.</th>
+                        <th class="border p-2 bg-emerald-900">Net Salary</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Javascript will populate rows -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Form 16 & Tax Computation Section -->
+        <div class="bg-slate-50 border border-slate-300 rounded-lg p-6">
+            <h3 class="font-bold text-xl mb-4 text-blue-900 border-b pb-2">Form 16 - Computation of Taxable Income & Tax Liability</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-bold text-sm bg-blue-100 p-2 rounded mb-2">
+                <div>Description / Particulars</div>
+                <div class="text-center">Old Regime (₹)</div>
+                <div class="text-center">New Regime (₹)</div>
+            </div>
+
+            <div id="computationRows" class="space-y-2 text-sm">
+                <!-- Populated via script -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-6 flex gap-4 no-print">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow">
+                Print / Export A3 Landscape
+            </button>
+            <button onclick="calculateAll()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded shadow">
+                Recalculate Totals
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const months = ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"];
+
+        function initTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+            months.forEach((m, idx) => {
+                let row = `
+                    <tr class="hover:bg-slate-50">
+                        <td class="border p-1 font-bold bg-slate-100">${m}</td>
+                        <td class="border p-1"><input type="number" class="basic" value="0" oninput="autoCalculateRow(${idx})"></td>
+                        <td class="border p-1"><input type="number" class="da" value="0" readonly class="bg-slate-100"></td>
+                        <td class="border p-1"><input type="number" class="hra" value="0" readonly class="bg-slate-100"></td>
+                        <td class="border p-1"><input type="number" class="ppsfn" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1 font-bold bg-blue-50"><input type="number" class="total_sal" value="0" readonly></td>
+                        <td class="border p-1"><input type="number" class="it_tax" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="gis" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="pt" value="200" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="lic" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="kgid" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="gpf" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="kass" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="nps" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="gpf_loan" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="kgid_loan" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="fa" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1"><input type="number" class="local_rec" value="0" oninput="calculateAll()"></td>
+                        <td class="border p-1 font-bold bg-red-50"><input type="number" class="total_ded" value="0" readonly></td>
+                        <td class="border p-1 font-bold bg-emerald-50"><input type="number" class="net_sal" value="0" readonly></td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+            calculateAll();
+        }
+
+        function autoCalculateRow(idx) {
+            const rows = document.querySelectorAll('#tableBody tr');
+            const row = rows[idx];
+            const basic = parseFloat(row.querySelector('.basic').value) || 0;
+            
+            // Automatic DA (15.75%) and HRA (7.5%)
+            const da = Math.round(basic * 0.1575);
+            const hra = Math.round(basic * 0.075);
+            
+            row.querySelector('.da').value = da;
+            row.querySelector('.hra').value = hra;
+
+            calculateAll();
+        }
+
+        function calculateAll() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let sumGross = 0, sumDed = 0, sumNet = 0;
+            let sum80C = 0, sumNPS = 0, sumPT = 0, sumIT = 0;
+
+            rows.forEach(row => {
+                const basic = parseFloat(row.querySelector('.basic').value) || 0;
+                const da = parseFloat(row.querySelector('.da').value) || 0;
+                const hra = parseFloat(row.querySelector('.hra').value) || 0;
+                const ppsfn = parseFloat(row.querySelector('.ppsfn').value) || 0;
+
+                const gis = parseFloat(row.querySelector('.gis').value) || 0;
+                const pt = parseFloat(row.querySelector('.pt').value) || 0;
+                const lic = parseFloat(row.querySelector('.lic').value) || 0;
+                const kgid = parseFloat(row.querySelector('.kgid').value) || 0;
+                const gpf = parseFloat(row.querySelector('.gpf').value) || 0;
+                const kass = parseFloat(row.querySelector('.kass').value) || 0;
+                const nps = parseFloat(row.querySelector('.nps').value) || 0;
+                const gpf_loan = parseFloat(row.querySelector('.gpf_loan').value) || 0;
+                const kgid_loan = parseFloat(row.querySelector('.kgid_loan').value) || 0;
+                const fa = parseFloat(row.querySelector('.fa').value) || 0;
+                const local_rec = parseFloat(row.querySelector('.local_rec').value) || 0;
+                const it_tax = parseFloat(row.querySelector('.it_tax').value) || 0;
+
+                const totalSal = basic + da + hra + ppsfn;
+                const totalDed = it_tax + gis + pt + lic + kgid + gpf + kass + nps + gpf_loan + kgid_loan + fa + local_rec;
+                const netSal = totalSal - totalDed;
+
+                row.querySelector('.total_sal').value = totalSal;
+                row.querySelector('.total_ded').value = totalDed;
+                row.querySelector('.net_sal').value = netSal;
+
+                sumGross += totalSal;
+                sumDed += totalDed;
+                sumNet += netSal;
+
+                sum80C += ppsfn + gis + lic + kgid + gpf;
+                sumNPS += nps;
+                sumPT += pt;
+                sumIT += it_tax;
+            });
+
+            renderForm16(sumGross, sum80C, sumNPS, sumPT, sumIT);
+        }
+
+        function computeIncomeTax(taxableIncome, regime) {
+            let tax = 0;
+            if (regime === 'old') {
+                if (taxableIncome > 250000 && taxableIncome <= 500000) tax += (taxableIncome - 250000) * 0.05;
+                if (taxableIncome > 500000 && taxableIncome <= 1000000) { tax += 12500 + (taxableIncome - 500000) * 0.20; }
+                if (taxableIncome > 1000000) { tax += 112500 + (taxableIncome - 1000000) * 0.30; }
+                // Rebate u/s 87A for Old Regime (up to 5L taxable income -> max rebate 12,500)
+                if (taxableIncome <= 500000) tax = Math.max(0, tax - 12500);
+            } else {
+                // New Regime tax slabs (FY 2026-27 guidelines)
+                if (taxableIncome > 300000 && taxableIncome <= 700000) tax += (taxableIncome - 300000) * 0.05;
+                else if (taxableIncome > 700000 && taxableIncome <= 1000000) tax += 20000 + (taxableIncome - 700000) * 0.10;
+                else if (taxableIncome > 1000000 && taxableIncome <= 1200000) tax += 50000 + (taxableIncome - 1000000) * 0.15;
+                else if (taxableIncome > 1200000 && taxableIncome <= 1500000) tax += 80000 + (taxableIncome - 1200000) * 0.20;
+                else if (taxableIncome > 1500000) tax += 140000 + (taxableIncome - 1500000) * 0.30;
+                
+                // New regime rebate u/s 87A (taxable income up to 7L)
+                if (taxableIncome <= 700000) tax = 0;
+            }
+            return Math.max(0, tax);
+        }
+
+        function renderForm16(gross, ded80c, nps, pt, paidTax) {
+            const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+            const totalGross = gross + otherIncome;
+
+            // Deductions
+            const stdDedOld = 50000;
+            const stdDedNew = 75000;
+            const capped80C = Math.min(150000, ded80c);
+
+            const taxableOld = Math.max(0, totalGross - stdDedOld - pt - capped80C - nps);
+            const taxableNew = Math.max(0, totalGross - stdDedNew - nps);
+
+            let taxOld = computeIncomeTax(taxableOld, 'old');
+            let taxNew = computeIncomeTax(taxableNew, 'new');
+
+            // 4% Cess
+            let netTaxOld = Math.round(taxOld * 1.04);
+            let netTaxNew = Math.round(taxNew * 1.04);
+
+            const container = document.getElementById('computationRows');
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1">
+                    <div>1. Gross Total Salary + Other Income</div>
+                    <div class="text-center font-semibold">₹ ${totalGross}</div>
+                    <div class="text-center font-semibold">₹ ${totalGross}</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1">
+                    <div>2. Standard Deduction U/S 16</div>
+                    <div class="text-center">₹ ${stdDedOld}</div>
+                    <div class="text-center">₹ ${stdDedNew}</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1">
+                    <div>3. Professional Tax U/S 16(iii)</div>
+                    <div class="text-center">₹ ${pt}</div>
+                    <div class="text-center">₹ 0</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1">
+                    <div>4. Chapter VI-A Deductions (80C capped @ 1.5L + NPS)</div>
+                    <div class="text-center">₹ ${capped80C + nps}</div>
+                    <div class="text-center">₹ ${nps}</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1 font-bold bg-amber-50">
+                    <div>5. Net Taxable Income</div>
+                    <div class="text-center">₹ ${taxableOld}</div>
+                    <div class="text-center">₹ ${taxableNew}</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1">
+                    <div>6. Total Tax Payable (Inc. 4% Cess)</div>
+                    <div class="text-center text-blue-600 font-bold">₹ ${netTaxOld}</div>
+                    <div class="text-center text-emerald-600 font-bold">₹ ${netTaxNew}</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b py-1">
+                    <div>7. Advance / TDS Tax Already Paid</div>
+                    <div class="text-center">₹ ${paidTax}</div>
+                    <div class="text-center">₹ ${paidTax}</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-2 font-bold bg-slate-200">
+                    <div>8. Balance Tax Remaining to be Paid / Refund</div>
+                    <div class="text-center ${netTaxOld - paidTax > 0 ? 'text-red-600' : 'text-green-600'}">₹ ${netTaxOld - paidTax}</div>
+                    <div class="text-center ${netTaxNew - paidTax > 0 ? 'text-red-600' : 'text-green-600'}">₹ ${netTaxNew - paidTax}</div>
+                </div>
+            `;
+        }
+
+        window.onload = initTable;
+    </script>
+</body>
+</html>
